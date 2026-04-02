@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Grove</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: #f5f4f0;
+    width: 100vw;
+    height: 100vh;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'Helvetica Neue', sans-serif;
+  }
+
+  #scene {
+    position: relative;
+    width: 400px;
+    height: 400px;
+  }
+
+  canvas {
+    position: absolute;
+    top: 0; left: 0;
+    width: 400px;
+    height: 400px;
+  }
+</style>
+</head>
+<body>
+
+<div id="scene">
+  <canvas id="c" width="400" height="400"></canvas>
+</div>
+
+<script>
+const canvas = document.getElementById('c');
+const ctx = canvas.getContext('2d');
+const W = 400, H = 400;
+
+// ── Destination page
+const DEST = './index.html';
+
+// ── Parameters
+const NUM_FRAGS = 180;
+const DELAY_BEFORE = 400;   // ms avant que l'explosion commence
+const DURATION    = 1100;   // ms durée de l'explosion
+const REDIRECT_AFTER = 1600; // ms avant redirect
+
+// ── Color palette (dark purple tones matching Grove)
+const COLORS = ['#0d0c14','#16141f','#1e1c2a','#2a2640','#3a3560','#7c5cf5','#9b7fff','#86efac'];
+
+// ── Build fragments
+// We slice a virtual square into irregular polygons using Poisson-ish distribution
+function makeFragments() {
+  const frags = [];
+  // Generate random "crack" points
+  const pts = [];
+  for (let i = 0; i < 40; i++) {
+    pts.push({ x: Math.random() * W, y: Math.random() * H });
+  }
+  // Add corners
+  pts.push({x:0,y:0},{x:W,y:0},{x:W,y:H},{x:0,y:H});
+  pts.push({x:W/2,y:0},{x:W,y:H/2},{x:W/2,y:H},{x:0,y:H/2});
+
+  // Simple triangulation: pick 3 random pts and form triangles
+  // We'll use a grid-based approach for better coverage
+  const cellW = W / 12;
+  const cellH = H / 12;
+
+  for (let row = 0; row < 12; row++) {
+    for (let col = 0; col < 12; col++) {
+      const x0 = col * cellW;
+      const y0 = row * cellH;
+      // Two triangles per cell with jitter
+      const jx = () => (Math.random() - 0.5) * cellW * 0.4;
+      const jy = () => (Math.random() - 0.5) * cellH * 0.4;
+
+      frags.push({
+        poly: [
+          {x: x0 + jx(),       y: y0 + jy()},
+          {x: x0+cellW + jx(), y: y0 + jy()},
+          {x: x0+cellW/2+jx(), y: y0+cellH+jy()}
+        ],
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        cx: x0 + cellW/2,
+        cy: y0 + cellH/2,
+        vx: 0, vy: 0, va: 0,
+        x: 0, y: 0, angle: 0,
+        opacity: 1,
+        exploded: false
+      });
+
+      frags.push({
+        poly: [
+          {x: x0 + jx(),       y: y0+cellH + jy()},
+          {x: x0+cellW + jx(), y: y0+cellH + jy()},
+          {x: x0+cellW/2+jx(), y: y0+cellH/2+jy()}
+        ],
+        color: COLORS[Math.floor(Math.random() * COLORS.length)],
+        cx: x0 + cellW/2,
+        cy: y0 + cellH * 0.75,
+        vx: 0, vy: 0, va: 0,
+        x: 0, y: 0, angle: 0,
+        opacity: 1,
+        exploded: false
+      });
+    }
+  }
+  return frags;
+}
+
+const frags = makeFragments();
+
+// ── Assign explosion velocities
+function explode() {
+  frags.forEach(f => {
+    const cx = W / 2, cy = H / 2;
+    const dx = f.cx - cx;
+    const dy = f.cy - cy;
+    const dist = Math.sqrt(dx*dx + dy*dy) || 1;
+    const power = 3 + Math.random() * 5;
+    f.vx = (dx / dist) * power + (Math.random()-0.5) * 4;
+    f.vy = (dy / dist) * power + (Math.random()-0.5) * 4;
+    f.va = (Math.random()-0.5) * 0.3;
+    f.exploded = true;
+  });
+}
+
+// ── Draw
+function drawFrag(f) {
+  if (f.poly.length < 3) return;
+  ctx.save();
+  ctx.globalAlpha = f.opacity;
+  ctx.translate(f.x, f.y);
+  ctx.rotate(f.angle);
+  ctx.beginPath();
+  ctx.moveTo(f.poly[0].x, f.poly[0].y);
+  for (let i = 1; i < f.poly.length; i++) {
+    ctx.lineTo(f.poly[i].x, f.poly[i].y);
+  }
+  ctx.closePath();
+  ctx.fillStyle = f.color;
+  ctx.fill();
+  // Thin white edge
+  ctx.strokeStyle = 'rgba(255,255,255,0.15)';
+  ctx.lineWidth = 0.5;
+  ctx.stroke();
+  ctx.restore();
+}
+
+function drawGroveText() {
+  ctx.save();
+  ctx.fillStyle = '#f0eeff';
+  ctx.font = '700 42px "Helvetica Neue", sans-serif';
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+  ctx.fillText('Grove', W/2, H/2 - 10);
+  ctx.font = '300 14px "Helvetica Neue", sans-serif';
+  ctx.fillStyle = 'rgba(240,238,255,0.5)';
+  ctx.letterSpacing = '3px';
+  ctx.fillText('LOGICIEL SAV APPLE', W/2, H/2 + 28);
+  ctx.restore();
+}
+
+// ── Animation state
+let started = false;
+let startTime = null;
+let phase = 'static'; // 'static' | 'exploding' | 'done'
+
+function render(now) {
+  ctx.clearRect(0, 0, W, H);
+
+  if (phase === 'static') {
+    frags.forEach(f => {
+      f.x = 0; f.y = 0; f.angle = 0; f.opacity = 1;
+      drawFrag(f);
+    });
+    drawGroveText();
+  }
+
+  if (phase === 'exploding') {
+    if (!startTime) startTime = now;
+    const elapsed = now - startTime;
+    const progress = Math.min(elapsed / DURATION, 1);
+
+    frags.forEach(f => {
+      // Ease out
+      const ease = 1 - Math.pow(1 - progress, 2);
+      f.x = f.vx * ease * DURATION * 0.06;
+      f.y = f.vy * ease * DURATION * 0.06;
+      f.angle = f.va * ease * DURATION * 0.06;
+      // Fade out — start fading at 40% progress
+      f.opacity = Math.max(0, 1 - Math.max(0, (progress - 0.4) / 0.6));
+      drawFrag(f);
+    });
+
+    // Grove text fades in at center as fragments scatter
+    if (progress > 0.5) {
+      ctx.save();
+      ctx.globalAlpha = (progress - 0.5) * 2;
+      drawGroveText();
+      ctx.restore();
+    }
+
+    if (progress >= 1) {
+      phase = 'done';
+    }
+  }
+
+  if (phase !== 'done') {
+    requestAnimationFrame(render);
+  }
+}
+
+// ── Boot
+requestAnimationFrame(render);
+
+setTimeout(() => {
+  phase = 'exploding';
+  explode();
+  requestAnimationFrame(render);
+}, DELAY_BEFORE);
+
+setTimeout(() => {
+  window.location.href = DEST;
+}, REDIRECT_AFTER);
+</script>
+</body>
+</html>
