@@ -2572,9 +2572,9 @@ const TOUR_STEPS = [
     text: "Cliquez sur <b>Envoyer le devis</b>." },
   { target: '#email-form', wait: 'emailSent', place: 'right',
     text: "L'onglet Email s'ouvre avec le modèle <b>Devis</b> déjà rempli : montant, diagnostic et PDF du devis en pièce jointe. Cliquez sur <b>Envoyer</b>." },
-  { target: '#status-btn', wait: 'replyIn', place: 'bottom', waiting: true,
-    text: "E-mail parti : le dossier passe en <b>Attente Client</b>. Élodie lit votre devis…" },
-  { target: '#tab-replies', wait: 'tab:replies', place: 'bottom',
+  { target: '#tab-replies', wait: 'replyIn', place: 'bottom', waiting: true,
+    text: "E-mail parti : le dossier passe en <b>Attente Client</b>. Élodie lit votre devis, sa réponse arrivera dans l'onglet <b>Réponses</b>…" },
+  { target: '#tab-replies', wait: 'tab:replies', place: 'bottom', autoIf: () => UI.tab === 'replies',
     text: "Élodie a répondu ! Ouvrez l'onglet <b>Réponses</b>." },
   { target: '#replies-list', next: true, place: 'right',
     text: "Elle accepte la réparation. Il reste à le noter dans le dossier." },
@@ -2684,12 +2684,18 @@ function loopTour() {
     TOUR.raf = requestAnimationFrame(loopTour); return;
   }
   const st = TOUR_STEPS[TOUR.i];
+  if (st.autoIf && !TOUR.pending && st.autoIf()) { TOUR.pending = true; setTimeout(tourNext, 250); }
   const el = document.querySelector(st.target);
   if (!el || el.offsetParent === null) {
     TOUR.missing = (TOUR.missing || 0) + 1;
     if (st.retreat && !TOUR.pending && TOUR.missing > 20) { TOUR.missing = 0; TOUR.i--; TOUR.say = null; TOUR.bound = null; TOUR.scrolled = false; renderBubble(); }
     ['tb-t', 'tb-b', 'tb-l', 'tb-r'].forEach(id => $(id).style.display = 'none');
-    ring.style.display = 'none'; b.style.display = 'none';
+    ring.style.display = 'none';
+    if (TOUR.missing > 60) {   // ~1 s sans cible : on garde la consigne visible, sans bloquer l'écran
+      b.style.display = 'block';
+      b.style.left = (window.innerWidth - b.offsetWidth - 24) + 'px';
+      b.style.top = (window.innerHeight - b.offsetHeight - 24) + 'px';
+    } else b.style.display = 'none';
     TOUR.raf = requestAnimationFrame(loopTour); return;
   }
   TOUR.missing = 0;
