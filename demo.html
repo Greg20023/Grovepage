@@ -469,6 +469,21 @@
   .toast { background: #1c1738; color: #fff; padding: 9px 16px; border-radius: 10px; font-size: 12.5px; box-shadow: 0 8px 24px rgba(0,0,0,0.25); display: flex; align-items: center; gap: 8px; animation: pop 0.2s ease; }
   .toast .tick { color: #86efac; }
 
+  /* ÉCRANS MOYENS : on resserre pour ne rien tronquer */
+  @media (max-width: 1400px) {
+    .list-panel { width: 240px; }
+    .dv-row { grid-template-columns: 22px 84px minmax(0,1fr) 100px 76px 88px 150px !important; gap: 6px !important; padding-left: 10px !important; padding-right: 10px !important; }
+    .dv-name { font-size: 12px; }
+    .dv-mode { font-size: 10.5px; }
+    .detail-body { padding-right: 14px; }
+  }
+  @media (max-width: 1200px) {
+    .list-panel { width: 215px; }
+    .dv-row { grid-template-columns: 20px 70px minmax(0,1fr) 92px 70px 82px 142px !important; }
+    .dv-ref { font-size: 9.5px; }
+    .detail-header { padding: 10px 14px; gap: 8px; }
+  }
+
   /* PETIT ÉCRAN */
   .small-screen { position: fixed; inset: 0; z-index: 300; background: #0d0c14; color: #f0eeff; display: none; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 32px; text-align: center; }
   .small-screen p { color: rgba(240,238,255,0.6); font-size: 14px; line-height: 1.6; max-width: 320px; }
@@ -533,6 +548,12 @@
       <div class="nav-item locked" id="nav-gsx" onclick="showLocked('gsx')"><span class="ico">🌐</span> Catalogue GSX <span class="lock">🔒</span></div>
       <div class="nav-item" id="nav-enlevements" onclick="showPage('enlevements')"><span class="ico">🚚</span> Enlèvements <span class="nav-red" id="nav-badge-enl" style="display:none"></span></div>
       <div class="nav-item locked" id="nav-fournisseur" onclick="showLocked('fournisseur')"><span class="ico">📦</span> Fournisseurs <span class="lock">🔒</span></div>
+
+      <div class="sidebar-section">Communication</div>
+      <div class="nav-item locked" id="nav-messagerie" onclick="showLocked('messagerie')">
+        <span class="ico"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5" fill="#93c5fd"/><path d="M3 7.5l9 6 9-6" stroke="#2563eb" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></span>
+        Messagerie <span class="lock">🔒</span>
+      </div>
     </div>
 
     <div class="sb-foot">
@@ -1104,6 +1125,7 @@ const LOCKED = {
   vente: { ic: '🛍️', t: 'Vente rapide', p: 'Vente comptoir d\'accessoires et de produits du catalogue, avec facturation immédiate.' },
   pieces: { ic: '🔧', t: 'Pièces', p: 'Stock de pièces détachées, réservations par intervention et alertes de réapprovisionnement.' },
   gsx: { ic: '🌐', t: 'Catalogue GSX', p: 'Connexion au portail Apple GSX pour les centres agréés : pièces officielles, garanties et marges calculées automatiquement.' },
+  messagerie: { ic: '✉️', t: 'Messagerie', p: "La boîte mail de l'atelier dans Grove : les e-mails des clients arrivent ici et se rattachent automatiquement au bon dossier SAV." },
   fournisseur: { ic: '📦', t: 'Fournisseurs', p: 'Commande de pièces chez vos fournisseurs habituels directement depuis une intervention.' },
 };
 
