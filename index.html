@@ -206,8 +206,7 @@
   .demo-full { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text2); text-decoration: none; padding: 4px 10px; border-radius: 100px; border: 1px solid var(--border); transition: color 0.2s, border-color 0.2s; }
   .demo-full:hover { color: var(--text); border-color: rgba(124,92,245,0.5); }
   .demo-full svg { width: 11px; height: 11px; }
-  .demo-stage { position: relative; height: min(1000px, 88vh); min-height: 620px; background: #e6e4ea; }
-  .demo-stage iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .demo-stage { position: relative; height: clamp(320px, 42vh, 460px); background: #16141f; }
   .demo-poster { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: #16141f; overflow: hidden; }
   .demo-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; filter: blur(3px) saturate(0.8); opacity: 0.35; transform: scale(1.03); }
   .demo-poster > *:not(img) { position: relative; }
@@ -218,6 +217,19 @@
   .demo-mobile { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: center; }
   .demo-mobile p { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 18px; font-weight: 300; }
   .demo-mobile a { display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 100px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 500; font-size: 14px; }
+  /* Superposition plein écran */
+  #demo-modal { position: fixed; inset: 0; z-index: 400; display: none; flex-direction: column; background: rgba(8,7,16,0.92); backdrop-filter: blur(6px); }
+  #demo-modal.open { display: flex; }
+  .dm-bar { height: 44px; flex-shrink: 0; display: flex; align-items: center; gap: 12px; padding: 0 16px; color: var(--text2); font-size: 12.5px; }
+  .dm-bar .dm-title { font-family: 'DM Mono', monospace; font-size: 11.5px; letter-spacing: 0.5px; color: var(--text3); }
+  .dm-bar .sp { flex: 1; }
+  .dm-bar a, .dm-bar button { display: inline-flex; align-items: center; gap: 7px; height: 30px; padding: 0 14px; border-radius: 100px; border: 1px solid var(--border); background: var(--surface); color: var(--text2); font-size: 12.5px; font-family: inherit; cursor: pointer; text-decoration: none; }
+  .dm-bar a:hover, .dm-bar button:hover { color: var(--text); border-color: rgba(124,92,245,0.5); }
+  .dm-bar .dm-close { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .dm-bar .dm-close:hover { background: var(--accent2); color: #fff; }
+  .dm-frame { flex: 1; margin: 0 14px 14px; border-radius: 14px; overflow: hidden; border: 1px solid rgba(255,255,255,0.12); box-shadow: 0 30px 80px rgba(0,0,0,0.6); background: #e6e4ea; }
+  .dm-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+  body.demo-open { overflow: hidden; }
   .demo-note { margin-top: 18px; font-size: 12.5px; color: var(--text3); text-align: center; font-weight: 300; }
   @media (max-width: 900px) {
     .demo-section { padding: 60px 24px; }
@@ -321,7 +333,7 @@
     </div>
     <ol class="demo-steps">
       <li>Créez une intervention</li>
-      <li>Chiffrez le devis et envoyez-le par SMS</li>
+      <li>Chiffrez le devis et envoyez-le par e-mail</li>
       <li>Clôturez et générez la facture</li>
     </ol>
   </div>
@@ -332,7 +344,7 @@
       <div class="mockup-bar" style="position:relative">
         <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
         <span class="demo-bar-title">grove — atelier démo</span>
-        <a class="demo-full" href="demo.html" target="_blank" rel="noopener" onclick="return goFullscreen(event)">Plein écran
+        <a class="demo-full" href="demo.html" target="_blank" rel="noopener">Ouvrir dans un onglet
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
       </div>
       <div class="demo-stage" id="demo-stage">
@@ -342,7 +354,7 @@
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>
             Lancer la démo
           </button>
-          <p>Visite guidée de 2 minutes · données 100 % fictives</p>
+          <p>S'ouvre en grand par-dessus la page · données 100 % fictives</p>
         </div>
       </div>
     </div>
@@ -462,6 +474,16 @@
   </div>
 </div>
 
+<div id="demo-modal" role="dialog" aria-modal="true" aria-label="Démo interactive de Grove">
+  <div class="dm-bar">
+    <span class="dm-title">grove — atelier démo</span>
+    <span class="sp"></span>
+    <a href="demo.html" target="_blank" rel="noopener">Ouvrir dans un onglet</a>
+    <button type="button" class="dm-close" onclick="closeDemo()">✕ Fermer</button>
+  </div>
+  <div class="dm-frame" id="dm-frame"></div>
+</div>
+
 <footer>
   <div class="footer-brand">
     <a href="#" class="footer-logo">
@@ -491,21 +513,27 @@
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
 
-  function goFullscreen(e) {
-    const frame = document.querySelector('.demo-frame');
-    const iframe = frame.querySelector('iframe');
-    if (!iframe) return true;                       // démo pas encore lancée : ouvre l'onglet
-    if (frame.requestFullscreen) { e.preventDefault(); frame.requestFullscreen(); return false; }
-    return true;
-  }
   function launchDemo() {
-    const stage = document.getElementById('demo-stage');
-    const f = document.createElement('iframe');
-    f.src = 'demo.html';
-    f.title = 'Démo interactive de Grove';
-    stage.appendChild(f);
-    f.addEventListener('load', () => { const p = document.getElementById('demo-poster'); if (p) p.remove(); f.focus(); });
+    const host = document.getElementById('dm-frame');
+    if (!host.querySelector('iframe')) {
+      const f = document.createElement('iframe');
+      f.src = 'demo.html';
+      f.title = 'Démo interactive de Grove';
+      host.appendChild(f);
+    }
+    document.getElementById('demo-modal').classList.add('open');
+    document.body.classList.add('demo-open');
+    // Échap ferme aussi quand on est dans la démo (même origine)
+    const f = host.querySelector('iframe');
+    f.addEventListener('load', () => {
+      try { f.contentDocument.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !f.contentDocument.querySelector('.modal-root.open, #tour[style*="block"]')) closeDemo(); }); } catch (err) {}
+    }, { once: true });
   }
+  function closeDemo() {
+    document.getElementById('demo-modal').classList.remove('open');
+    document.body.classList.remove('demo-open');
+  }
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape') closeDemo(); });
 </script>
 
 </body>
