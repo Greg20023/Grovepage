@@ -181,6 +181,52 @@
   .footer-back:hover { border-color: rgba(124,92,245,0.4); color: var(--text); background: rgba(124,92,245,0.08); }
   .footer-back svg { width: 14px; height: 14px; }
 
+
+  /* NAV — onglet démo */
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .nav-demo { white-space: nowrap;
+    display: flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 500; color: #fff; text-decoration: none;
+    padding: 7px 15px; border-radius: 100px;
+    background: var(--accent); border: 1px solid var(--accent);
+    box-shadow: 0 0 0 0 rgba(124,92,245,0.5); transition: background 0.2s, box-shadow 0.2s;
+  }
+  .nav-demo:hover { background: var(--accent2); box-shadow: 0 0 24px rgba(124,92,245,0.45); }
+  .nav-demo .live { width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 6px var(--green); }
+
+  /* DÉMO INTERACTIVE */
+  .demo-section { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 100px 48px 90px; scroll-margin-top: 64px; }
+  .demo-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 40px; flex-wrap: wrap; margin-bottom: 44px; }
+  .demo-steps { list-style: none; display: flex; flex-direction: column; gap: 10px; counter-reset: s; min-width: 280px; }
+  .demo-steps li { counter-increment: s; display: flex; align-items: center; gap: 12px; font-size: 14px; color: var(--text2); font-weight: 300; }
+  .demo-steps li::before { content: counter(s); width: 24px; height: 24px; border-radius: 50%; border: 1px solid rgba(124,92,245,0.45); color: var(--accent2); font-family: 'DM Mono', monospace; font-size: 11px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+  .demo-frame .mockup-bar { justify-content: flex-start; }
+  .demo-bar-title { position: absolute; left: 50%; transform: translateX(-50%); font-family: 'DM Mono', monospace; font-size: 11px; color: var(--text3); letter-spacing: 0.5px; }
+  .demo-full { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font-size: 11.5px; color: var(--text2); text-decoration: none; padding: 4px 10px; border-radius: 100px; border: 1px solid var(--border); transition: color 0.2s, border-color 0.2s; }
+  .demo-full:hover { color: var(--text); border-color: rgba(124,92,245,0.5); }
+  .demo-full svg { width: 11px; height: 11px; }
+  .demo-stage { position: relative; height: min(780px, 82vh); background: #e6e4ea; }
+  .demo-stage iframe { width: 100%; height: 100%; border: 0; display: block; }
+  .demo-poster { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; background: #16141f; overflow: hidden; }
+  .demo-poster img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: top left; filter: blur(3px) saturate(0.8); opacity: 0.35; transform: scale(1.03); }
+  .demo-poster > *:not(img) { position: relative; }
+  .demo-launch { display: inline-flex; align-items: center; gap: 10px; height: 52px; padding: 0 26px; border-radius: 100px; border: none; cursor: pointer; background: var(--accent); color: #fff; font-family: 'Syne', sans-serif; font-weight: 700; font-size: 16px; box-shadow: 0 12px 40px rgba(124,92,245,0.45); transition: transform 0.2s, background 0.2s; }
+  .demo-launch:hover { background: var(--accent2); transform: translateY(-2px); }
+  .demo-launch:focus-visible { outline: 2px solid #fff; outline-offset: 3px; }
+  .demo-poster p { font-size: 13px; color: var(--text2); }
+  .demo-mobile { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; text-align: center; }
+  .demo-mobile p { font-size: 14px; color: var(--text2); line-height: 1.6; margin-bottom: 18px; font-weight: 300; }
+  .demo-mobile a { display: inline-flex; align-items: center; height: 44px; padding: 0 22px; border-radius: 100px; background: var(--accent); color: #fff; text-decoration: none; font-weight: 500; font-size: 14px; }
+  .demo-note { margin-top: 18px; font-size: 12.5px; color: var(--text3); text-align: center; font-weight: 300; }
+  @media (max-width: 900px) {
+    .demo-section { padding: 60px 24px; }
+    .demo-frame-wrap { display: none; }
+    .demo-mobile { display: block; }
+    .nav-back .txt { display: none; }
+    .nav-demo .t-long { display: none; }
+    .nav-demo { white-space: nowrap; padding: 7px 13px; }
+  }
+
   /* ANIMATIONS */
   @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
   .reveal { opacity: 0; transform: translateY(20px); transition: opacity 0.7s ease, transform 0.7s ease; }
@@ -223,10 +269,13 @@
     </a>
     <span class="beta-pill">BÊTA 2026</span>
   </div>
-  <a href="https://techcare-center.com" class="nav-back">
+  <div class="nav-right">
+    <a href="#demo" class="nav-demo"><span class="live"></span><span>Essayer<span class="t-long"> la démo</span></span></a>
+    <a href="https://techcare-center.com" class="nav-back">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-    TechCare Center
+    <span class="txt">TechCare Center</span>
   </a>
+  </div>
 </nav>
 
 <div class="hero">
@@ -259,6 +308,52 @@
     </div>
   </div>
 </div>
+
+<div class="divider"></div>
+
+<section class="demo-section" id="demo">
+  <div class="demo-head reveal">
+    <div>
+      <div class="section-label">Démo interactive</div>
+      <h2 class="section-title">Essayez Grove,<br>sans rien installer.</h2>
+      <p class="section-sub">Un atelier fictif, prêt à l'emploi : des clients, des appareils et des dossiers en cours. Cliquez partout, rien n'est enregistré.</p>
+    </div>
+    <ol class="demo-steps">
+      <li>Créez une intervention</li>
+      <li>Chiffrez le devis et envoyez-le par SMS</li>
+      <li>Clôturez et générez la facture</li>
+    </ol>
+  </div>
+
+  <div class="mockup-wrap demo-frame-wrap" style="opacity:1;animation:none;max-width:none">
+    <div class="mockup-glow"></div>
+    <div class="mockup-frame demo-frame">
+      <div class="mockup-bar" style="position:relative">
+        <div class="mockup-dot"></div><div class="mockup-dot"></div><div class="mockup-dot"></div>
+        <span class="demo-bar-title">grove — atelier démo</span>
+        <a class="demo-full" href="demo.html" target="_blank" rel="noopener">Plein écran
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M8 7h9v9"/></svg></a>
+      </div>
+      <div class="demo-stage" id="demo-stage">
+        <div class="demo-poster" id="demo-poster">
+          <img src="https://static.wixstatic.com/media/867868_2d4875feb8d448da9f05aab443708626~mv2.png" alt="" aria-hidden="true" onerror="this.remove()">
+          <button type="button" class="demo-launch" onclick="launchDemo()">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 4.5v15a1 1 0 0 0 1.5.86l12.5-7.5a1 1 0 0 0 0-1.72L8.5 3.64A1 1 0 0 0 7 4.5z"/></svg>
+            Lancer la démo
+          </button>
+          <p>Visite guidée de 2 minutes · données 100 % fictives</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="demo-mobile">
+    <p>Grove est conçu pour un écran d'ordinateur. Pour profiter de la démo, ouvrez cette page sur un Mac ou un PC.</p>
+    <a href="demo.html" target="_blank" rel="noopener">Ouvrir quand même</a>
+  </div>
+
+  <p class="demo-note">Les clients, numéros et montants de la démo sont inventés. Aucune donnée réelle n'y figure.</p>
+</section>
 
 <div class="divider"></div>
 
@@ -394,6 +489,15 @@
     });
   }, { threshold: 0.1 });
   document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  function launchDemo() {
+    const stage = document.getElementById('demo-stage');
+    const f = document.createElement('iframe');
+    f.src = 'demo.html';
+    f.title = 'Démo interactive de Grove';
+    stage.appendChild(f);
+    f.addEventListener('load', () => { const p = document.getElementById('demo-poster'); if (p) p.remove(); f.focus(); });
+  }
 </script>
 
 </body>
